@@ -455,8 +455,14 @@ public class RNDataWedgeIntentsModule extends ReactContextBaseJavaModule impleme
           Bundle intentBundle = intent.getExtras();
           intentBundle.remove("com.symbol.datawedge.decode_data"); //  fb converter cannot cope with byte arrays
           intentBundle.remove("com.motorolasolutions.emdk.datawedge.decode_data"); //  fb converter cannot cope with byte arrays
-          WritableMap map = Arguments.fromBundle(intentBundle);
-          sendEvent(this.reactContext, "datawedge_broadcast_intent", map);
+          // WritableMap map = Arguments.fromBundle(intentBundle);
+          // sendEvent(this.reactContext, "datawedge_broadcast_intent", map);
+          WritableMap scanData = new WritableNativeMap();
+          scanData.putString("source", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.source"));
+          scanData.putString("data", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.data_string"));
+          scanData.putString("labelType", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.label_type"));
+          sendEvent(this.reactContext, "barcode_scan", scanData);
+          return;
       }
 
       String action = intent.getAction();
