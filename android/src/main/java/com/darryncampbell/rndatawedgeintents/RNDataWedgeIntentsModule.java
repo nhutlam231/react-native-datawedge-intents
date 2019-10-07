@@ -455,14 +455,8 @@ public class RNDataWedgeIntentsModule extends ReactContextBaseJavaModule impleme
           Bundle intentBundle = intent.getExtras();
           intentBundle.remove("com.symbol.datawedge.decode_data"); //  fb converter cannot cope with byte arrays
           intentBundle.remove("com.motorolasolutions.emdk.datawedge.decode_data"); //  fb converter cannot cope with byte arrays
-          // WritableMap map = Arguments.fromBundle(intentBundle);
-          // sendEvent(this.reactContext, "datawedge_broadcast_intent", map);
-          WritableMap scanData = new WritableNativeMap();
-          scanData.putString("source", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.source"));
-          scanData.putString("data", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.data_string"));
-          scanData.putString("labelType", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.label_type"));
-          sendEvent(this.reactContext, "barcode_scan", scanData);
-          return;
+          WritableMap map = Arguments.fromBundle(intentBundle);
+          sendEvent(this.reactContext, "datawedge_broadcast_intent", map);
       }
 
       String action = intent.getAction();
@@ -495,9 +489,17 @@ public class RNDataWedgeIntentsModule extends ReactContextBaseJavaModule impleme
           String decodedLabelType = intent.getStringExtra(RECEIVED_SCAN_TYPE);
 
           WritableMap scanData = new WritableNativeMap();
-          scanData.putString("source", decodedSource);
-          scanData.putString("data", decodedData);
-          scanData.putString("labelType", decodedLabelType);
+          if (intent.hasExtra("v2API"))
+          {
+              scanData.putString("source", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.source"));
+              scanData.putString("data", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.data_string"));
+              scanData.putString("labelType", intent.getStringExtra("com.motorolasolutions.emdk.datawedge.label_type"));
+          }
+          else {
+              scanData.putString("source", decodedSource);
+              scanData.putString("data", decodedData);
+              scanData.putString("labelType", decodedLabelType);
+          }
           sendEvent(this.reactContext, "barcode_scan", scanData);
       }
     }
